@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #0a0f1e;
+  --foreground: #e2e8f0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Noto Sans KR', Arial, sans-serif;
+}
+
+.military-card {
+  background: #0f1a2e;
+  border: 1px solid #1e3a5f;
+  border-radius: 8px;
+}
+
+.military-btn {
+  background: #1a3a5c;
+  border: 1px solid #2a5a8c;
+  color: #7dd3fc;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.military-btn:hover {
+  background: #2a5a8c;
+  color: #fff;
+}
+
+.military-btn-primary {
+  background: #1d4ed8;
+  border: 1px solid #3b82f6;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.military-btn-primary:hover {
+  background: #2563eb;
+}
+
+.military-input {
+  background: #0a1628;
+  border: 1px solid #1e3a5f;
+  color: #e2e8f0;
+  padding: 10px 14px;
+  border-radius: 4px;
+  width: 100%;
+  outline: none;
+}
+
+.military-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }

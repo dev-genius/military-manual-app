@@ -1,0 +1,10 @@
+korean,english,abbreviation,definition_ko,definition_en,category
+작전명령,Operation Order,OPORD,지휘관이 예하 부대에 내리는 작전 수행 명령,A directive issued by a commander to subordinate commanders,작전
+경계명령,Warning Order,WARNORD,다음 작전에 대한 예비 통보,A preliminary notice of an order or action which is to follow,작전
+단편명령,Fragmentary Order,FRAGO,기존 작전명령을 일부 변경하는 명령,An abbreviated form of an operation order,작전
+화력지원,Fire Support,FS,직사화기 간접화기 항공화력 등을 통한 전투지원,Collective and coordinated use of target acquisition data and fire weapons,화력
+포병지원,Artillery Support,AS,포병 화력을 이용한 전투지원,Fire support provided by artillery units,화력
+보급,Supply,S,부대에 필요한 물자를 제공하는 활동,The activity of providing goods and materials needed by a unit,병참
+정보,Intelligence,INT,적 및 환경에 관한 정보의 수집 처리 분석,The product resulting from the collection and analysis of information,정보
+지휘통제,Command and Control,C2,작전 수행을 위한 지휘관의 권한 행사 및 지휘 절차,The exercise of authority and direction by a designated commander,작전
+전술작전본부,Tactical Operations Center,TOC,전술 제대의 작전 지휘 시설,A physical facility at which the primary functions of the command post are performed,작전
