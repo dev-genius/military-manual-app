@@ -23,6 +23,7 @@ export const MANUALS: ManualEntry[] = [
   { id: 'adp-3-37',  number: 'ADP 3-37',  title: 'Protection',                           category: '작전',     description: '부대보호 교범',                  url: `${BASE}/adp-3-37.pdf` },
   { id: 'adp-3-90',  number: 'ADP 3-90',  title: 'Offense and Defense',                  category: '작전',     description: '공격 및 방어 작전 교범',         url: `${BASE}/adp-3-90.pdf` },
   { id: 'adp-5-0',   number: 'ADP 5-0',   title: 'The Operations Process',               category: '작전',     description: '작전 프로세스 교범',             url: `${BASE}/adp-5-0.pdf` },
+  { id: 'adp-6-0',   number: 'ADP 6-0',   title: 'Mission Command',                      category: '지휘',     description: '임무형 지휘 교범',               url: `${BASE}/adp-6-0.pdf` },
 
   // ── FM ───────────────────────────────────────────────────────────
   { id: 'fm-1',       number: 'FM 1',       title: 'The Army: A Primer to Our Profession of Arms', category: '기본',     description: '미 육군 전문직 입문서',    url: `${BASE}/fm-1.pdf` },

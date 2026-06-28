@@ -27,6 +27,7 @@ const ALL_MANUALS = [
   { id: 'adp-3-37',   number: 'ADP 3-37',   title: 'Protection' },
   { id: 'adp-3-90',   number: 'ADP 3-90',   title: 'Offense and Defense' },
   { id: 'adp-5-0',    number: 'ADP 5-0',    title: 'The Operations Process' },
+  { id: 'adp-6-0',    number: 'ADP 6-0',    title: 'Mission Command' },
   { id: 'fm-1',       number: 'FM 1',        title: 'The Army' },
   { id: 'fm-1-02-1',  number: 'FM 1-02.1',  title: 'Operational Terms' },
   { id: 'fm-1-02-2',  number: 'FM 1-02.2',  title: 'Military Symbols' },
