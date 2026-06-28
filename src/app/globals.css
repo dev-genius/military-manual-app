@@ -60,3 +60,23 @@ body {
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
+
+/* PDF.js 텍스트 레이어 */
+.pdf-text-layer {
+  color: transparent;
+  line-height: 1;
+  pointer-events: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.pdf-text-layer span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+.pdf-text-layer ::selection {
+  background: rgba(59, 130, 246, 0.35);
+  color: transparent;
+}
