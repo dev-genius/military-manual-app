@@ -45,6 +45,14 @@ const ALL_MANUALS = [
   { id: 'fm-6-0',     number: 'FM 6-0',     title: 'Commander and Staff Org.' },
 ]
 
+// 문장 단위로 분리 (대문자 시작 + 마침표 기준, 약어 U.S./FM 등 예외 처리)
+function splitSentences(text: string): string[] {
+  return text
+    .split(/(?<=[.!?])\s+(?=[A-Z("])/)
+    .map(s => s.trim())
+    .filter(Boolean)
+}
+
 function highlight(text: string, q: string) {
   const idx = text.toLowerCase().indexOf(q.toLowerCase())
   if (idx === -1) return <span>{text}</span>
@@ -54,6 +62,20 @@ function highlight(text: string, q: string) {
       <mark className="bg-yellow-400/30 text-yellow-200 rounded px-0.5">{text.slice(idx, idx + q.length)}</mark>
       {text.slice(idx + q.length)}
     </>
+  )
+}
+
+function FormattedText({ text, query }: { text: string; query: string }) {
+  const sentences = splitSentences(text)
+  if (sentences.length <= 1) {
+    return <p className="text-slate-300 text-sm leading-relaxed">{highlight(text, query)}</p>
+  }
+  return (
+    <div className="space-y-1">
+      {sentences.map((s, i) => (
+        <p key={i} className="text-slate-300 text-sm leading-relaxed">{highlight(s, query)}</p>
+      ))}
+    </div>
   )
 }
 
@@ -243,9 +265,7 @@ export default function SearchPage() {
                 {r.paragraph_no ? `§${r.paragraph_no} ` : ''}p.{r.page} 번역 ↗
               </Link>
             </div>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              {highlight(r.text_en, searched)}
-            </p>
+            <FormattedText text={r.text_en} query={searched} />
           </div>
         ))}
       </div>
