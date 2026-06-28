@@ -63,18 +63,27 @@ export default function PdfViewer({ url, manualTitle }: Props) {
       {/* Google Docs Viewer */}
       <div className="flex-1 military-card overflow-hidden flex flex-col" style={{ height: '75vh', minHeight: '500px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700 flex-shrink-0">
-          <span className="text-slate-400 text-xs">PDF 뷰어</span>
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300">
-            원본 PDF ↗
-          </a>
+          <span className="text-slate-400 text-xs">PDF 미리보기</span>
         </div>
         <iframe
           src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
           className="w-full flex-1"
           title={manualTitle}
         />
-        <div className="px-4 py-2 text-xs bg-slate-900/80 text-slate-500">
-          텍스트 복사 후 오른쪽 번역 패널에 붙여넣으세요
+        <div className="px-3 py-3 border-t border-slate-700 bg-slate-900 flex flex-col gap-2">
+          <p className="text-yellow-400 text-xs font-semibold">📋 텍스트 복사 방법</p>
+          <p className="text-slate-400 text-xs leading-relaxed">
+            뷰어 안에서 복사한 내용은 클립보드에 저장되지 않습니다.<br />
+            아래 버튼으로 원본 PDF를 열어 복사 후 번역 패널에 붙여넣으세요.
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="military-btn-primary text-center py-2.5 text-sm rounded font-semibold"
+          >
+            📄 원본 PDF 열기 → 복사하기
+          </a>
         </div>
       </div>
 
