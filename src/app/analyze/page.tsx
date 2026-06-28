@@ -15,33 +15,33 @@ type Result = {
 type FreqEntry = { manual_number: string; manual_title: string; manual_id: string; count: number }
 
 const ALL_MANUALS = [
-  { id: 'adp-1',      number: 'ADP 1' },
-  { id: 'adp-1-01',   number: 'ADP 1-01' },
-  { id: 'adp-2-0',    number: 'ADP 2-0' },
-  { id: 'adp-3-0',    number: 'ADP 3-0' },
-  { id: 'adp-3-05',   number: 'ADP 3-05' },
-  { id: 'adp-3-07',   number: 'ADP 3-07' },
-  { id: 'adp-3-13',   number: 'ADP 3-13' },
-  { id: 'adp-3-19',   number: 'ADP 3-19' },
-  { id: 'adp-3-28',   number: 'ADP 3-28' },
-  { id: 'adp-3-37',   number: 'ADP 3-37' },
-  { id: 'adp-3-90',   number: 'ADP 3-90' },
-  { id: 'adp-5-0',    number: 'ADP 5-0' },
-  { id: 'fm-1',       number: 'FM 1' },
-  { id: 'fm-1-02-1',  number: 'FM 1-02.1' },
-  { id: 'fm-1-02-2',  number: 'FM 1-02.2' },
-  { id: 'fm-2-0',     number: 'FM 2-0' },
-  { id: 'fm-2-22-3',  number: 'FM 2-22.3' },
-  { id: 'fm-3-0',     number: 'FM 3-0' },
-  { id: 'fm-3-01',    number: 'FM 3-01' },
-  { id: 'fm-3-01-44', number: 'FM 3-01.44' },
-  { id: 'fm-3-04',    number: 'FM 3-04' },
-  { id: 'fm-3-05',    number: 'FM 3-05' },
-  { id: 'fm-3-07',    number: 'FM 3-07' },
-  { id: 'fm-3-90',    number: 'FM 3-90' },
-  { id: 'fm-3-96',    number: 'FM 3-96' },
-  { id: 'fm-5-0',     number: 'FM 5-0' },
-  { id: 'fm-6-0',     number: 'FM 6-0' },
+  { id: 'adp-1',      number: 'ADP 1',      title: 'The Army' },
+  { id: 'adp-1-01',   number: 'ADP 1-01',   title: 'Doctrine Primer' },
+  { id: 'adp-2-0',    number: 'ADP 2-0',    title: 'Intelligence' },
+  { id: 'adp-3-0',    number: 'ADP 3-0',    title: 'Operations' },
+  { id: 'adp-3-05',   number: 'ADP 3-05',   title: 'Army Special Operations' },
+  { id: 'adp-3-07',   number: 'ADP 3-07',   title: 'Stability' },
+  { id: 'adp-3-13',   number: 'ADP 3-13',   title: 'Information' },
+  { id: 'adp-3-19',   number: 'ADP 3-19',   title: 'Fires' },
+  { id: 'adp-3-28',   number: 'ADP 3-28',   title: 'Defense Support of Civil Auth.' },
+  { id: 'adp-3-37',   number: 'ADP 3-37',   title: 'Protection' },
+  { id: 'adp-3-90',   number: 'ADP 3-90',   title: 'Offense and Defense' },
+  { id: 'adp-5-0',    number: 'ADP 5-0',    title: 'The Operations Process' },
+  { id: 'fm-1',       number: 'FM 1',        title: 'The Army' },
+  { id: 'fm-1-02-1',  number: 'FM 1-02.1',  title: 'Operational Terms' },
+  { id: 'fm-1-02-2',  number: 'FM 1-02.2',  title: 'Military Symbols' },
+  { id: 'fm-2-0',     number: 'FM 2-0',     title: 'Intelligence' },
+  { id: 'fm-2-22-3',  number: 'FM 2-22.3',  title: 'Human Intelligence Ops' },
+  { id: 'fm-3-0',     number: 'FM 3-0',     title: 'Operations' },
+  { id: 'fm-3-01',    number: 'FM 3-01',    title: 'Air and Missile Defense' },
+  { id: 'fm-3-01-44', number: 'FM 3-01.44', title: 'Short-Range Air Defense' },
+  { id: 'fm-3-04',    number: 'FM 3-04',    title: 'Army Aviation' },
+  { id: 'fm-3-05',    number: 'FM 3-05',    title: 'Army Special Operations' },
+  { id: 'fm-3-07',    number: 'FM 3-07',    title: 'Stability' },
+  { id: 'fm-3-90',    number: 'FM 3-90',    title: 'Tactics' },
+  { id: 'fm-3-96',    number: 'FM 3-96',    title: 'Brigade Combat Team' },
+  { id: 'fm-5-0',     number: 'FM 5-0',     title: 'Planning and Orders Production' },
+  { id: 'fm-6-0',     number: 'FM 6-0',     title: 'Commander and Staff Org.' },
 ]
 
 function highlight(text: string, q: string) {
@@ -155,14 +155,17 @@ export default function SearchPage() {
         {showManualPicker && (
           <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-3 pt-3 border-t border-slate-700">
             {ALL_MANUALS.map(m => (
-              <label key={m.id} className="flex items-center gap-1.5 cursor-pointer group">
+              <label key={m.id} className="flex items-start gap-1.5 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={selectedIds.has(m.id)}
                   onChange={() => toggleManual(m.id)}
-                  className="accent-blue-500"
+                  className="accent-blue-500 mt-0.5 shrink-0"
                 />
-                <span className="text-xs text-slate-400 group-hover:text-blue-300">{m.number}</span>
+                <span className="text-xs text-slate-400 group-hover:text-blue-300 leading-tight">
+                  <span className="text-blue-400 font-mono">{m.number}</span>
+                  <span className="text-slate-500 ml-1">{m.title}</span>
+                </span>
               </label>
             ))}
           </div>
