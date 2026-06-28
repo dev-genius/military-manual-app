@@ -54,19 +54,19 @@ export default function ManualsPage() {
       </div>
 
       {/* 검색 + 카테고리 */}
-      <div className="flex gap-3 mb-5 flex-wrap items-start">
+      <div className="flex flex-col gap-3 mb-5">
         <input
-          className="military-input max-w-xs"
+          className="military-input"
           placeholder="교범명 또는 번호 검색"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {CATEGORIES.map(c => (
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                 category === c ? 'bg-blue-700 text-white' : 'military-btn'
               }`}
             >

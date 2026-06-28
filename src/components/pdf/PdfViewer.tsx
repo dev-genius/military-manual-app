@@ -29,9 +29,9 @@ export default function PdfViewer({ url, manualTitle }: Props) {
   }
 
   return (
-    <div className="flex gap-4 h-[80vh]">
+    <div className="flex flex-col lg:flex-row gap-4">
       {/* PDF iframe */}
-      <div className="flex-1 military-card overflow-hidden relative flex flex-col">
+      <div className="flex-1 military-card overflow-hidden relative flex flex-col" style={{ height: '60vh', minHeight: '400px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
           <span className="text-slate-400 text-xs">Google Docs Viewer</span>
           <a
@@ -49,13 +49,13 @@ export default function PdfViewer({ url, manualTitle }: Props) {
           title={manualTitle}
         />
         <div className="px-4 py-2 bg-slate-900/80 text-xs text-slate-500">
-          텍스트를 복사한 후 오른쪽 번역 패널에 붙여넣으세요
+          텍스트를 복사한 후 아래(모바일) 또는 오른쪽(PC) 번역 패널에 붙여넣으세요
         </div>
       </div>
 
       {/* 번역 패널 */}
-      <div className="w-80 flex flex-col gap-3">
-        <div className="military-card p-4 flex-1 flex flex-col gap-3">
+      <div className="lg:w-80 flex flex-col gap-3">
+        <div className="military-card p-4 flex flex-col gap-3">
           <h3 className="text-blue-300 text-xs font-semibold tracking-widest">번역 패널</h3>
 
           <div>

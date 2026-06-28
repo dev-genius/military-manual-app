@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 
 const links = [
   { href: '/', label: '홈' },
@@ -11,11 +12,15 @@ const links = [
 
 export default function Nav() {
   const pathname = usePathname()
+  const [open, setOpen] = useState(false)
+
   return (
-    <nav style={{ background: '#060d1a', borderBottom: '1px solid #1e3a5f' }} className="px-4 py-3">
-      <div className="max-w-7xl mx-auto flex items-center gap-8">
+    <nav style={{ background: '#060d1a', borderBottom: '1px solid #1e3a5f' }}>
+      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
         <span className="text-blue-400 font-bold text-lg tracking-widest">⚔ MILMAN</span>
-        <div className="flex gap-1">
+
+        {/* 데스크톱 메뉴 */}
+        <div className="hidden md:flex gap-1">
           {links.map(l => (
             <Link
               key={l.href}
@@ -30,7 +35,38 @@ export default function Nav() {
             </Link>
           ))}
         </div>
+
+        {/* 모바일 햄버거 버튼 */}
+        <button
+          className="md:hidden flex flex-col gap-1.5 p-2"
+          onClick={() => setOpen(o => !o)}
+          aria-label="메뉴"
+        >
+          <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? 'rotate-45 translate-y-2' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-blue-400 transition-opacity ${open ? 'opacity-0' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+        </button>
       </div>
+
+      {/* 모바일 드롭다운 메뉴 */}
+      {open && (
+        <div style={{ borderTop: '1px solid #1e3a5f' }} className="md:hidden px-4 pb-3">
+          {links.map(l => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className={`block px-4 py-3 rounded text-sm font-medium transition-colors mt-1 ${
+                pathname === l.href
+                  ? 'bg-blue-900 text-blue-300'
+                  : 'text-slate-400 hover:text-blue-300 hover:bg-slate-800'
+              }`}
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </nav>
   )
 }
