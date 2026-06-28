@@ -2,10 +2,10 @@
 import { useEffect, useRef, useState } from 'react'
 import PdfJsViewer, { PdfJsViewerHandle } from './PdfJsViewer'
 
-type Props = { url: string; manualTitle: string }
+type Props = { url: string; manualTitle: string; initialPage?: number }
 type Paragraph = { text: string; translation: string; translating: boolean }
 
-export default function PdfViewer({ url, manualTitle }: Props) {
+export default function PdfViewer({ url, manualTitle, initialPage = 1 }: Props) {
   const [isMobile, setIsMobile] = useState(false)
   const [rawText, setRawText] = useState('')
   const [paragraphs, setParagraphs] = useState<Paragraph[]>([])
@@ -81,7 +81,7 @@ export default function PdfViewer({ url, manualTitle }: Props) {
             <span className="text-slate-400 text-xs">텍스트를 드래그하여 선택 후 복사 → 번역 패널에 붙여넣기</span>
           </div>
         )}
-        <PdfJsViewer ref={viewerRef} url={url} />
+        <PdfJsViewer ref={viewerRef} url={url} initialPage={initialPage} />
       </div>
 
       {/* 우측 패널 */}

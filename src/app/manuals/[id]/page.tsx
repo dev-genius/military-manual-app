@@ -2,10 +2,19 @@ import { MANUALS } from '@/lib/manuals'
 import { notFound } from 'next/navigation'
 import PdfViewer from '@/components/pdf/PdfViewer'
 
-export default async function ManualPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ManualPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ page?: string }>
+}) {
   const { id } = await params
+  const { page } = await searchParams
   const manual = MANUALS.find(m => m.id === id)
   if (!manual) notFound()
+
+  const initialPage = page ? parseInt(page, 10) : 1
 
   return (
     <div>
@@ -17,7 +26,7 @@ export default async function ManualPage({ params }: { params: Promise<{ id: str
         <h1 className="text-xl font-bold text-white">{manual.title}</h1>
         <p className="text-slate-400 text-sm mt-1">{manual.description}</p>
       </div>
-      <PdfViewer url={manual.url} manualTitle={manual.title} />
+      <PdfViewer url={manual.url} manualTitle={manual.title} initialPage={initialPage} />
     </div>
   )
 }

@@ -5,7 +5,7 @@ export type PdfJsViewerHandle = {
   getPageText: () => Promise<string>
 }
 
-const PdfJsViewer = forwardRef<PdfJsViewerHandle, { url: string }>(function PdfJsViewer({ url }, ref) {
+const PdfJsViewer = forwardRef<PdfJsViewerHandle, { url: string; initialPage?: number }>(function PdfJsViewer({ url, initialPage = 1 }, ref) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -50,7 +50,10 @@ const PdfJsViewer = forwardRef<PdfJsViewerHandle, { url: string }>(function PdfJ
         pdfRef.current = pdf
         setTotalPages(pdf.numPages)
         setLoading(false)
-        renderPage(pdf, 1)
+        const startPage = Math.min(Math.max(initialPage, 1), pdf.numPages)
+        pageRef.current = startPage
+        setCurrentPage(startPage)
+        renderPage(pdf, startPage)
       } catch (e) {
         console.error(e)
         if (!cancelled) { setError(true); setLoading(false) }
