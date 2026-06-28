@@ -250,24 +250,20 @@ export default function SearchPage() {
       {/* 결과 목록 */}
       <div className="space-y-3">
         {results.map(r => (
-          <div key={r.id} className="military-card p-4">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <Link href={`/manuals/${r.manual_id}`}>
-                <span className="bg-blue-900 text-blue-300 text-xs px-2 py-0.5 rounded font-semibold hover:bg-blue-800">
+          <Link key={r.id} href={`/translate/${r.manual_id}?page=${r.page}`}>
+            <div className="military-card p-4 hover:border-purple-500 transition-colors cursor-pointer">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="bg-blue-900 text-blue-300 text-xs px-2 py-0.5 rounded font-semibold">
                   {r.manual_number}
                 </span>
-              </Link>
-              <span className="text-slate-500 text-xs">{r.manual_title}</span>
-              <Link
-                href={`/translate/${r.manual_id}?page=${r.page}`}
-                className="text-slate-500 text-xs ml-auto hover:text-purple-300 hover:underline"
-                title="번역 페이지에서 열기"
-              >
-                {r.paragraph_no ? `§${r.paragraph_no} ` : ''}p.{r.page} 번역 ↗
-              </Link>
+                <span className="text-slate-500 text-xs">{r.manual_title}</span>
+                <span className="text-slate-500 text-xs ml-auto">
+                  {r.paragraph_no ? `§${r.paragraph_no} ` : ''}p.{r.page} 번역 ↗
+                </span>
+              </div>
+              <FormattedText text={r.text_en} query={searched} />
             </div>
-            <FormattedText text={r.text_en} query={searched} />
-          </div>
+          </Link>
         ))}
       </div>
 
