@@ -117,7 +117,26 @@ export default function PdfJsViewer({ url }: Props) {
 
       <div className="flex-1 overflow-auto bg-slate-900 p-2">
         {loading && <div className="flex items-center justify-center h-40 text-slate-400 text-sm">PDF 로딩 중…</div>}
-        {error && <div className="flex items-center justify-center h-40 text-red-400 text-sm">{error}</div>}
+        {error && (
+          <div className="flex flex-col items-center justify-center gap-4 py-12 px-6 text-center">
+            <div className="text-3xl">⚠️</div>
+            <div>
+              <p className="text-red-400 font-semibold mb-1">PDF를 불러오지 못했습니다</p>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                서버 사정에 따라 일부 자료는 직접 접속이 안될 수 있습니다.<br />
+                아래 버튼으로 원본 사이트에서 직접 열어보세요.
+              </p>
+            </div>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="military-btn-primary px-5 py-2 rounded text-sm"
+            >
+              원본 PDF 열기 ↗
+            </a>
+          </div>
+        )}
         <div ref={containerRef} />
       </div>
     </div>
