@@ -17,7 +17,7 @@ export default function Nav() {
   return (
     <nav style={{ background: '#060d1a', borderBottom: '1px solid #1e3a5f' }}>
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <span className="text-blue-400 font-bold text-lg tracking-widest">⚔ MILMAN <span className="text-slate-500 text-xs font-normal tracking-normal">by YOO</span></span>
+        <span className="text-blue-400 font-bold text-lg tracking-widest">⚔ MILMAN <span className="text-slate-500 text-xs font-normal tracking-normal">by YOO · v2026.06.28</span></span>
 
         {/* 데스크톱 메뉴 */}
         <div className="hidden md:flex gap-1">
