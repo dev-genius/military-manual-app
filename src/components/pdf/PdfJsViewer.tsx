@@ -1,9 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 
-type Props = {
-  url: string
-}
+type Props = { url: string }
 
 export default function PdfJsViewer({ url }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -12,8 +10,12 @@ export default function PdfJsViewer({ url }: Props) {
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [scale, setScale] = useState(1.2)
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pdfRef = useRef<any>(null)
+  const pageRef = useRef(1)
+  const scaleRef = useRef(1.2)
+  const renderIdRef = useRef(0) // 렌더 순서 추적 (오래된 렌더 무시)
 
   useEffect(() => {
     let cancelled = false
@@ -22,14 +24,13 @@ export default function PdfJsViewer({ url }: Props) {
       setError('')
       try {
         const pdfjsLib = await import('pdfjs-dist')
-        const workerSrc = '/pdf.worker.min.mjs'
         try {
-          const worker = new Worker(workerSrc, { type: 'module' })
+          const worker = new Worker('/pdf.worker.min.mjs', { type: 'module' })
           pdfjsLib.GlobalWorkerOptions.workerPort = worker
         } catch {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc
+          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
         }
-        if (!url) throw new Error('URL이 없습니다')
+        if (!url) throw new Error('URL 없음')
         const response = await fetch(url)
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
         const data = await response.arrayBuffer()
@@ -38,10 +39,10 @@ export default function PdfJsViewer({ url }: Props) {
         pdfRef.current = pdf
         setTotalPages(pdf.numPages)
         setLoading(false)
-        await doRender(pdf, 1, scale)
+        await renderPage(pdf, 1, scaleRef.current)
       } catch (e) {
         console.error(e)
-        if (!cancelled) setError('PDF를 불러오지 못했습니다')
+        if (!cancelled) setError('error')
         setLoading(false)
       }
     }
@@ -51,43 +52,45 @@ export default function PdfJsViewer({ url }: Props) {
   }, [url])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function doRender(pdf: any, pageNum: number, sc: number) {
+  async function renderPage(pdf: any, pageNum: number, sc: number) {
     if (!containerRef.current) return
+    const renderId = ++renderIdRef.current // 이 렌더의 고유 ID
+
     const container = containerRef.current
     container.innerHTML = ''
 
     const page = await pdf.getPage(pageNum)
+    if (renderIdRef.current !== renderId) return // 더 최신 렌더가 있으면 중단
+
     const viewport = page.getViewport({ scale: sc })
 
-    // 캔버스
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')!
     canvas.width = viewport.width
     canvas.height = viewport.height
-    canvas.style.cssText = `display:block; width:100%; height:auto;`
+    canvas.style.cssText = 'display:block; width:100%; height:auto;'
 
-    // 텍스트 레이어
     const textLayerDiv = document.createElement('div')
     textLayerDiv.className = 'pdf-text-layer'
+    const ratio = container.clientWidth / viewport.width
     textLayerDiv.style.cssText = `
       position:absolute; top:0; left:0;
       width:${viewport.width}px; height:${viewport.height}px;
       transform-origin:top left;
-      transform:scale(${container.clientWidth / viewport.width});
+      transform:scale(${ratio || 1});
     `
 
     const wrapper = document.createElement('div')
-    wrapper.style.cssText = `position:relative; width:100%;`
+    wrapper.style.cssText = 'position:relative; width:100%;'
     wrapper.appendChild(canvas)
     wrapper.appendChild(textLayerDiv)
     container.appendChild(wrapper)
 
     await page.render({ canvasContext: ctx, viewport }).promise
+    if (renderIdRef.current !== renderId) return
 
-    // pdfjs v6: TextLayer 클래스 사용
     const pdfjsLib = await import('pdfjs-dist')
     const textContent = await page.getTextContent()
-
     if (pdfjsLib.TextLayer) {
       const textLayer = new pdfjsLib.TextLayer({
         textContentSource: textContent,
@@ -100,27 +103,29 @@ export default function PdfJsViewer({ url }: Props) {
 
   async function goToPage(pageNum: number) {
     if (!pdfRef.current || pageNum < 1 || pageNum > totalPages) return
+    pageRef.current = pageNum
     setCurrentPage(pageNum)
-    await doRender(pdfRef.current, pageNum, scale)
+    await renderPage(pdfRef.current, pageNum, scaleRef.current)
   }
 
   async function changeScale(newScale: number) {
+    scaleRef.current = newScale
     setScale(newScale)
-    if (pdfRef.current) await doRender(pdfRef.current, currentPage, newScale)
+    if (pdfRef.current) await renderPage(pdfRef.current, pageRef.current, newScale)
   }
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700 flex-shrink-0 flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage <= 1} className="military-btn px-2 py-1 text-xs disabled:opacity-30">◀</button>
-          <span className="text-slate-400 text-xs whitespace-nowrap">{currentPage} / {totalPages || '…'}</span>
-          <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage >= totalPages} className="military-btn px-2 py-1 text-xs disabled:opacity-30">▶</button>
+          <button onClick={() => goToPage(pageRef.current - 1)} disabled={currentPage <= 1} className="military-btn px-3 py-1.5 text-sm disabled:opacity-30">◀</button>
+          <span className="text-slate-300 text-sm whitespace-nowrap">{currentPage} / {totalPages || '…'}</span>
+          <button onClick={() => goToPage(pageRef.current + 1)} disabled={currentPage >= totalPages} className="military-btn px-3 py-1.5 text-sm disabled:opacity-30">▶</button>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => changeScale(Math.max(0.7, +(scale - 0.2).toFixed(1)))} className="military-btn px-2 py-1 text-xs">−</button>
-          <span className="text-slate-400 text-xs">{Math.round(scale * 100)}%</span>
-          <button onClick={() => changeScale(Math.min(2.5, +(scale + 0.2).toFixed(1)))} className="military-btn px-2 py-1 text-xs">+</button>
+          <button onClick={() => changeScale(Math.max(0.5, +(scaleRef.current - 0.2).toFixed(1)))} className="military-btn px-3 py-1.5 text-sm">−</button>
+          <span className="text-slate-300 text-sm w-12 text-center">{Math.round(scale * 100)}%</span>
+          <button onClick={() => changeScale(Math.min(3.0, +(scaleRef.current + 0.2).toFixed(1)))} className="military-btn px-3 py-1.5 text-sm">+</button>
         </div>
       </div>
 
@@ -136,12 +141,7 @@ export default function PdfJsViewer({ url }: Props) {
                 아래 버튼으로 원본 사이트에서 직접 열어보세요.
               </p>
             </div>
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="military-btn-primary px-5 py-2 rounded text-sm"
-            >
+            <a href={url} target="_blank" rel="noopener noreferrer" className="military-btn-primary px-5 py-2 rounded text-sm">
               원본 PDF 열기 ↗
             </a>
           </div>
