@@ -53,39 +53,45 @@ export default function PdfJsViewer({ url }: { url: string }) {
     const page = await pdf.getPage(pageNum)
     if (renderIdRef.current !== renderId) return
 
-    // 컨테이너 너비에 딱 맞는 scale 계산 → CSS transform 불필요
+    const dpr = window.devicePixelRatio || 1
     const containerWidth = container.clientWidth || 400
     const baseViewport = page.getViewport({ scale: 1 })
-    const scale = containerWidth / baseViewport.width
-    const viewport = page.getViewport({ scale })
 
-    // ── 캔버스 ──
+    // CSS 표시 크기 기준 scale (텍스트 레이어용)
+    const cssScale = containerWidth / baseViewport.width
+    const cssViewport = page.getViewport({ scale: cssScale })
+
+    // 캔버스는 DPR 배율로 고해상도 렌더링
+    const hiResViewport = page.getViewport({ scale: cssScale * dpr })
+
+    // ── 캔버스 (고해상도) ──
     const canvas = document.createElement('canvas')
-    canvas.width = viewport.width
-    canvas.height = viewport.height
-    canvas.style.cssText = 'display:block; width:100%; height:auto;'
+    canvas.width = hiResViewport.width
+    canvas.height = hiResViewport.height
+    // CSS 표시 크기는 cssViewport 기준
+    canvas.style.cssText = `display:block; width:${cssViewport.width}px; height:${cssViewport.height}px;`
 
-    // ── 텍스트 레이어 (canvas와 동일한 크기, transform 없음) ──
+    // ── 텍스트 레이어 (CSS 크기와 동일) ──
     const textDiv = document.createElement('div')
     textDiv.className = 'pdf-text-layer'
     textDiv.style.cssText = `
       position:absolute; top:0; left:0;
-      width:${viewport.width}px;
-      height:${viewport.height}px;
+      width:${cssViewport.width}px;
+      height:${cssViewport.height}px;
     `
 
     const wrapper = document.createElement('div')
-    wrapper.style.cssText = `position:relative; width:100%; height:${viewport.height}px;`
+    wrapper.style.cssText = `position:relative; width:${cssViewport.width}px; height:${cssViewport.height}px;`
     wrapper.appendChild(canvas)
     wrapper.appendChild(textDiv)
     container.appendChild(wrapper)
 
-    // 캔버스 렌더링
+    // 캔버스 렌더링 (고해상도)
     const ctx = canvas.getContext('2d')!
-    await page.render({ canvasContext: ctx, viewport }).promise
+    await page.render({ canvasContext: ctx, viewport: hiResViewport }).promise
     if (renderIdRef.current !== renderId) return
 
-    // 텍스트 레이어 렌더링 (v3 API)
+    // 텍스트 레이어는 CSS scale viewport 사용 → 위치 정확히 일치
     try {
       const pdfjs = await import('pdfjs-dist')
       const textContent = await page.getTextContent()
@@ -93,7 +99,7 @@ export default function PdfJsViewer({ url }: { url: string }) {
       ;(pdfjs as any).renderTextLayer({
         textContent,
         container: textDiv,
-        viewport,
+        viewport: cssViewport,
         textDivs: [],
       })
     } catch {
@@ -110,7 +116,6 @@ export default function PdfJsViewer({ url }: { url: string }) {
 
   return (
     <div className="flex flex-col h-full">
-      {/* 컨트롤 바 */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700 flex-shrink-0">
         <div className="flex items-center gap-2">
           <button
@@ -127,34 +132,21 @@ export default function PdfJsViewer({ url }: { url: string }) {
             className="military-btn px-3 py-1.5 text-sm disabled:opacity-30"
           >▶</button>
         </div>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-slate-500 text-xs hover:text-blue-300"
-        >
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-slate-500 text-xs hover:text-blue-300">
           원본 ↗
         </a>
       </div>
 
-      {/* PDF 영역 */}
       <div className="flex-1 overflow-auto bg-slate-900 p-2">
         {loading && (
-          <div className="flex items-center justify-center h-40 text-slate-400 text-sm">
-            PDF 로딩 중…
-          </div>
+          <div className="flex items-center justify-center h-40 text-slate-400 text-sm">PDF 로딩 중…</div>
         )}
         {error && (
           <div className="flex flex-col items-center justify-center gap-4 py-12 px-6 text-center">
             <div className="text-3xl">⚠️</div>
             <p className="text-red-400 font-semibold">PDF를 불러오지 못했습니다</p>
             <p className="text-slate-400 text-xs">서버 사정에 따라 일부 자료는 접속이 안될 수 있습니다.</p>
-            <a
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="military-btn-primary px-5 py-2 rounded text-sm"
-            >
+            <a href={url} target="_blank" rel="noopener noreferrer" className="military-btn-primary px-5 py-2 rounded text-sm">
               원본 PDF 열기 ↗
             </a>
           </div>
