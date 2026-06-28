@@ -29,12 +29,13 @@ export async function GET(req: NextRequest) {
   const limit = isCommon ? 10 : 50
   const ids = manualsParam ? manualsParam.split(',').filter(Boolean) : []
 
-  // Query 1: 전체 교범별 빈도 집계 (limit 없음, 최소 필드만)
+  // Query 1: 전체 교범별 빈도 집계 (최대 10,000행, 최소 필드만)
   let freqQuery = supabase
     .from('paragraphs')
     .select('manual_id, manual_number, manual_title')
     .ilike('text_en', `%${q}%`)
     .not('text_en', 'ilike', '%....%')
+    .limit(10000)
   if (ids.length > 0) freqQuery = freqQuery.in('manual_id', ids)
 
   // Query 2: 상위 50개 문단 (표시용)
