@@ -198,9 +198,13 @@ export default function SearchPage() {
           <span className="text-green-400 shrink-0">④</span>
           <span>그 문단 페이지로 이동하셔서 <span className="text-purple-300 font-semibold">번역 기능</span>을 활용할 수 있습니다.</span>
         </div>
+        <div className="flex items-start gap-2 text-sm text-slate-300">
+          <span className="text-green-400 shrink-0">⑤</span>
+          <span>검색된 교범을 클릭하면 관련 문단을 볼 수 있습니다.</span>
+        </div>
         <div className="flex items-start gap-2 text-sm text-yellow-600">
-          <span className="shrink-0">⑤</span>
-          <span>검색결과는 50개까지 표시됩니다. 모든 교범 검색보다는 원하는 교범을 선택하셔서 검색을 추천합니다.</span>
+          <span className="shrink-0">※</span>
+          <span>검색속도를 위하여 모든 교범 검색보다는 원하는 교범 선택을 추천합니다. 그러나 어떤 교범인지 잘 모르겠다면 모든 교범을 대상으로 검색해도 됩니다.</span>
         </div>
       </div>
 
