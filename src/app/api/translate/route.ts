@@ -7,18 +7,24 @@ export async function POST(req: NextRequest) {
   if (!text) return NextResponse.json({ error: 'No text provided' }, { status: 400 })
 
   const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 })
+  if (!apiKey) return NextResponse.json({ error: 'GEMINI_API_KEY not set' }, { status: 500 })
 
-  const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey)
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
-  const isToKorean = targetLang === 'KO'
-  const prompt = isToKorean
-    ? `다음 영어 군사 텍스트를 한국어로 번역하세요. 군사 전문용어는 한국 군에서 사용하는 공식 용어로 번역하세요. 번역문만 출력하고 설명은 하지 마세요.\n\n${text}`
-    : `다음 한국어 군사 용어를 영어로 번역하세요. 미군 공식 군사용어(FM, ADP 등에서 사용하는 용어)로 번역하세요. 번역문만 출력하고 설명은 하지 마세요.\n\n${text}`
+    const isToKorean = targetLang === 'KO'
+    const prompt = isToKorean
+      ? `다음 영어 군사 텍스트를 한국어로 번역하세요. 군사 전문용어는 한국 군에서 사용하는 공식 용어로 번역하세요. 번역문만 출력하고 설명은 하지 마세요.\n\n${text}`
+      : `다음 한국어 군사 용어를 영어로 번역하세요. 미군 공식 군사용어(FM, ADP 등에서 사용하는 용어)로 번역하세요. 번역문만 출력하고 설명은 하지 마세요.\n\n${text}`
 
-  const result = await model.generateContent(prompt)
-  const translated = result.response.text().trim()
+    const result = await model.generateContent(prompt)
+    const translated = result.response.text().trim()
 
-  return NextResponse.json({ translated })
+    return NextResponse.json({ translated })
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    console.error('Translate error:', msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
 }
