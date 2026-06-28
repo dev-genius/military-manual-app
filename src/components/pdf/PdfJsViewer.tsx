@@ -22,7 +22,7 @@ export default function PdfJsViewer({ url }: Props) {
       setError('')
       try {
         const pdfjsLib = await import('pdfjs-dist')
-        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
         if (!url) throw new Error('URL이 없습니다')
         const response = await fetch(url)
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
