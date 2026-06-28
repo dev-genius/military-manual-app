@@ -1,0 +1,115 @@
+'use client'
+import { MANUALS, CATEGORIES } from '@/lib/manuals'
+import { useState } from 'react'
+import Link from 'next/link'
+
+type PubType = 'ADP' | 'FM'
+
+export default function TranslatePage() {
+  const [pubType, setPubType] = useState<PubType>('ADP')
+  const [category, setCategory] = useState('전체')
+  const [search, setSearch] = useState('')
+
+  const filtered = MANUALS.filter(m => {
+    const matchType = m.number.startsWith(pubType)
+    const matchCat = category === '전체' || m.category === category
+    const matchSearch =
+      !search ||
+      m.title.toLowerCase().includes(search.toLowerCase()) ||
+      m.number.toLowerCase().includes(search.toLowerCase()) ||
+      m.description.includes(search)
+    return matchType && matchCat && matchSearch
+  })
+
+  const adpCount = MANUALS.filter(m => m.number.startsWith('ADP')).length
+  const fmCount = MANUALS.filter(m => m.number.startsWith('FM')).length
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white mb-4">교범 번역</h1>
+        <div className="military-card p-4 flex flex-col gap-2">
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-purple-400 shrink-0">①</span>
+            <span>교범을 클릭하세요.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-purple-400 shrink-0">②</span>
+            <span>원하는 페이지로 이동하세요.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-purple-400 shrink-0">③</span>
+            <span><span className="text-purple-300 font-semibold">현 페이지 번역</span> 버튼을 누르시면 AI가 한국어로 번역합니다.</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ADP / FM 탭 */}
+      <div className="flex gap-2 mb-5">
+        {(['ADP', 'FM'] as PubType[]).map(t => (
+          <button
+            key={t}
+            onClick={() => { setPubType(t); setCategory('전체') }}
+            className={`px-6 py-2.5 rounded font-semibold text-sm transition-colors ${
+              pubType === t
+                ? 'bg-purple-700 text-white border border-purple-500'
+                : 'military-btn'
+            }`}
+          >
+            {t}
+            <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${
+              pubType === t ? 'bg-purple-500 text-white' : 'bg-slate-700 text-slate-400'
+            }`}>
+              {t === 'ADP' ? adpCount : fmCount}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* 검색 + 카테고리 */}
+      <div className="flex flex-col gap-3 mb-5">
+        <input
+          className="military-input"
+          placeholder="교범명 또는 번호 검색"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+          {CATEGORIES.map(c => (
+            <button
+              key={c}
+              onClick={() => setCategory(c)}
+              className={`px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                category === c ? 'bg-purple-700 text-white' : 'military-btn'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="text-slate-500 text-center py-20">검색 결과가 없습니다</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map(m => (
+            <Link key={m.id} href={`/translate/${m.id}`}>
+              <div className="military-card p-5 hover:border-purple-500 transition-colors cursor-pointer h-full">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-xs font-mono text-purple-400 bg-purple-950 px-2 py-1 rounded">{m.number}</span>
+                  <span className="text-xs text-slate-500 bg-slate-800 px-2 py-1 rounded">{m.category}</span>
+                </div>
+                <h2 className="text-white font-semibold mb-2 text-sm leading-relaxed">{m.title}</h2>
+                <p className="text-slate-400 text-xs">{m.description}</p>
+                <div className="mt-4 text-purple-400 text-xs flex items-center gap-1">
+                  <span>🌐</span> AI 번역
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

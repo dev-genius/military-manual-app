@@ -30,7 +30,7 @@ const services = [
     title: '교범 번역',
     subtitle: 'AI Translation',
     desc: '현재 열람 중인 교범 페이지를 AI가 한국어로 번역합니다. 군사 전문용어 특화.',
-    href: '/manuals',
+    href: '/translate',
     color: 'border-purple-700 hover:border-purple-400',
     badge: 'Gemini AI',
   },

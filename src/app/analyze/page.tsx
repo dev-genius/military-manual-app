@@ -219,11 +219,11 @@ export default function SearchPage() {
               </Link>
               <span className="text-slate-500 text-xs">{r.manual_title}</span>
               <Link
-                href={`/manuals/${r.manual_id}?page=${r.page}`}
-                className="text-slate-500 text-xs ml-auto hover:text-blue-300 hover:underline"
-                title="해당 페이지로 이동"
+                href={`/translate/${r.manual_id}?page=${r.page}`}
+                className="text-slate-500 text-xs ml-auto hover:text-purple-300 hover:underline"
+                title="번역 페이지에서 열기"
               >
-                {r.paragraph_no ? `§${r.paragraph_no} ` : ''}p.{r.page} ↗
+                {r.paragraph_no ? `§${r.paragraph_no} ` : ''}p.{r.page} 번역 ↗
               </Link>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">
