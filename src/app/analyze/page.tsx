@@ -265,7 +265,10 @@ export default function SearchPage() {
       {total !== null && (
         <p className="text-slate-400 text-sm mb-4">
           전체 <span className="text-white font-semibold">{total.toLocaleString()}</span>개 문단 검색됨
-          {!activeManual && <span className="text-slate-500 ml-1">— 교범을 클릭하면 해당 문단이 표시됩니다</span>}
+          {activeManual
+            ? <span className="text-slate-500 ml-1">— <span className="text-white font-semibold">{results.filter(r => r.manual_id === activeManual).length}</span>개 표시 중</span>
+            : <span className="text-slate-500 ml-1">— 교범을 클릭하면 해당 문단이 표시됩니다</span>
+          }
         </p>
       )}
 

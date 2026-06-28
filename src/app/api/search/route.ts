@@ -25,8 +25,6 @@ export async function GET(req: NextRequest) {
   }
 
   const supabase = createClient(url, key)
-  const isCommon = q.split(/\s+/).every(w => COMMON_WORDS.has(w))
-  const limit = isCommon ? 10 : 50
   const ids = manualsParam ? manualsParam.split(',').filter(Boolean) : []
 
   // Query 1: 전체 교범별 빈도 집계 (최대 10,000행, 최소 필드만)
@@ -38,14 +36,14 @@ export async function GET(req: NextRequest) {
     .limit(10000)
   if (ids.length > 0) freqQuery = freqQuery.in('manual_id', ids)
 
-  // Query 2: 상위 50개 문단 (표시용)
+  // Query 2: 전체 문단 (교범 선택 시 필터링은 클라이언트에서)
   let resultQuery = supabase
     .from('paragraphs')
     .select('id, manual_id, manual_number, manual_title, page, paragraph_no, text_en', { count: 'exact' })
     .ilike('text_en', `%${q}%`)
     .not('text_en', 'ilike', '%....%')
     .order('manual_number')
-    .limit(limit)
+    .limit(10000)
   if (ids.length > 0) resultQuery = resultQuery.in('manual_id', ids)
 
   const [freqRes, resultRes] = await Promise.all([freqQuery, resultQuery])
