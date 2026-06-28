@@ -153,19 +153,17 @@ export default function SearchPage() {
           </div>
         </div>
         {showManualPicker && (
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-3 pt-3 border-t border-slate-700">
+          <div className="mt-3 pt-3 border-t border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-1">
             {ALL_MANUALS.map(m => (
-              <label key={m.id} className="flex items-start gap-1.5 cursor-pointer group">
+              <label key={m.id} className="flex items-center gap-2 cursor-pointer group px-2 py-1.5 rounded hover:bg-slate-800 transition-colors">
                 <input
                   type="checkbox"
                   checked={selectedIds.has(m.id)}
                   onChange={() => toggleManual(m.id)}
-                  className="accent-blue-500 mt-0.5 shrink-0"
+                  className="accent-blue-500 shrink-0"
                 />
-                <span className="text-xs text-slate-400 group-hover:text-blue-300 leading-tight">
-                  <span className="text-blue-400 font-mono">{m.number}</span>
-                  <span className="text-slate-500 ml-1">{m.title}</span>
-                </span>
+                <span className="font-mono text-blue-400 text-xs w-20 shrink-0">{m.number}</span>
+                <span className="text-slate-400 text-xs truncate group-hover:text-blue-200">{m.title}</span>
               </label>
             ))}
           </div>
