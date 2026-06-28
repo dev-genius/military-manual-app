@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
     .from('paragraphs')
     .select('id, manual_id, manual_number, manual_title, page, paragraph_no, text_en', { count: 'exact' })
     .ilike('text_en', `%${q}%`)
+    .not('text_en', 'ilike', '%....%')  // 목차 dot leader 제외
     .order('manual_number')
     .limit(limit)
 
