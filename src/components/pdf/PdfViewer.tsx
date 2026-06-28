@@ -16,7 +16,7 @@ export default function PdfViewer({ url, manualTitle }: Props) {
   const [rawText, setRawText] = useState('')
   const [paragraphs, setParagraphs] = useState<Paragraph[]>([])
   const [scrollLocked, setScrollLocked] = useState(false)
-  const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+  const viewerUrl = `/api/pdf?url=${encodeURIComponent(url)}`
 
   function toggleScrollLock() {
     const next = !scrollLocked
@@ -71,7 +71,7 @@ export default function PdfViewer({ url, manualTitle }: Props) {
       {/* PDF iframe */}
       <div className="flex-1 military-card overflow-hidden relative flex flex-col" style={{ height: '60vh', minHeight: '400px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
-          <span className="text-slate-400 text-xs">Google Docs Viewer</span>
+          <span className="text-slate-400 text-xs">PDF 뷰어</span>
           <div className="flex items-center gap-3">
             <button
               onClick={toggleScrollLock}
