@@ -23,8 +23,7 @@ export default function PdfJsViewer({ url }: Props) {
       try {
         const pdfjsLib = await import('pdfjs-dist')
         pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
-        const proxyUrl = `/api/pdf?url=${encodeURIComponent(url)}`
-        const pdf = await pdfjsLib.getDocument({ url: proxyUrl }).promise
+        const pdf = await pdfjsLib.getDocument({ url }).promise
         if (cancelled) return
         pdfRef.current = pdf
         setTotalPages(pdf.numPages)
