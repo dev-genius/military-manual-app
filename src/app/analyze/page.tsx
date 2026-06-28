@@ -107,6 +107,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Result[]>([])
   const [total, setTotal] = useState<number | null>(null)
+  const [manualCounts, setManualCounts] = useState<FreqEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState('')
@@ -132,6 +133,7 @@ export default function SearchPage() {
     setError('')
     setResults([])
     setTotal(null)
+    setManualCounts([])
     setSearched(q.trim())
     try {
       const params = new URLSearchParams({ q: q.trim(), manuals: [...selectedIds].join(',') })
@@ -140,6 +142,7 @@ export default function SearchPage() {
       if (data.error) { setError(data.error); return }
       setResults(data.results ?? [])
       setTotal(data.total ?? 0)
+      setManualCounts(data.manualCounts ?? [])
     } catch {
       setError('검색 중 오류가 발생했습니다.')
     } finally {
@@ -147,14 +150,6 @@ export default function SearchPage() {
     }
   }
 
-  const freqMap = new Map<string, FreqEntry>()
-  for (const r of results) {
-    if (!freqMap.has(r.manual_id)) {
-      freqMap.set(r.manual_id, { manual_id: r.manual_id, manual_number: r.manual_number, manual_title: r.manual_title, count: 0 })
-    }
-    freqMap.get(r.manual_id)!.count++
-  }
-  const freqData = [...freqMap.values()].sort((a, b) => b.count - a.count)
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -175,6 +170,10 @@ export default function SearchPage() {
         <div className="flex items-start gap-2 text-sm text-slate-300">
           <span className="text-green-400 shrink-0">④</span>
           <span>그 문단 페이지로 이동하셔서 <span className="text-purple-300 font-semibold">번역 기능</span>을 활용할 수 있습니다.</span>
+        </div>
+        <div className="flex items-start gap-2 text-sm text-yellow-600">
+          <span className="shrink-0">⑤</span>
+          <span>검색결과는 50개까지 표시됩니다. 모든 교범 검색보다는 원하는 교범을 선택하셔서 검색을 추천합니다.</span>
         </div>
       </div>
 
@@ -237,14 +236,16 @@ export default function SearchPage() {
 
       {/* 결과 요약 */}
       {total !== null && (
-        <p className="text-slate-400 text-xs mb-4">
-          결과 <span className="text-white font-semibold">{total.toLocaleString()}</span>개 중{' '}
-          <span className="text-white font-semibold">{results.length}</span>개 표시
+        <p className="text-slate-400 text-sm mb-4">
+          전체 <span className="text-white font-semibold">{total.toLocaleString()}</span>개 문단 검색됨
+          {results.length < total && (
+            <span className="text-slate-500"> — 상위 <span className="text-white font-semibold">{results.length}</span>개 표시</span>
+          )}
         </p>
       )}
 
       {/* 빈도 시각화 */}
-      {freqData.length > 0 && <FreqBar data={freqData} query={searched} />}
+      {manualCounts.length > 0 && <FreqBar data={manualCounts} query={searched} />}
 
       {/* 결과 목록 */}
       <div className="space-y-3">
