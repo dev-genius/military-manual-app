@@ -41,6 +41,14 @@ export default function TranslatePage() {
             <span className="text-purple-400 shrink-0">③</span>
             <span><span className="text-purple-300 font-semibold">현 페이지 번역</span> 버튼을 누르시면 AI가 한국어로 번역합니다.</span>
           </div>
+          <div className="flex items-start gap-2 text-sm text-slate-400">
+            <span className="text-yellow-500 shrink-0">④</span>
+            <span>토큰이 제한되어 있어 번역 기능이 중지될 수 있습니다.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-slate-400">
+            <span className="text-yellow-500 shrink-0">⑤</span>
+            <span>번역 기능이 안되면 <span className="text-blue-300">원본 ↗</span> 버튼으로 교범 원문을 받아 개인 AI로 번역하실 것을 추천드립니다.</span>
+          </div>
         </div>
       </div>
 
