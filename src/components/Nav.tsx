@@ -38,16 +38,27 @@ export default function Nav() {
           ))}
         </div>
 
-        {/* 모바일 햄버거 버튼 */}
-        <button
-          className="md:hidden flex flex-col gap-1.5 p-2"
-          onClick={() => setOpen(o => !o)}
-          aria-label="메뉴"
-        >
-          <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-blue-400 transition-opacity ${open ? 'opacity-0' : ''}`} />
-          <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? '-rotate-45 -translate-y-2' : ''}`} />
-        </button>
+        {/* 모바일 우측: 홈 버튼 + 햄버거 */}
+        <div className="md:hidden flex items-center gap-1">
+          <Link
+            href="/"
+            className="p-2 text-slate-400 hover:text-blue-300 transition-colors"
+            aria-label="홈"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 5v6h4v-6m2 0h2a2 2 0 002-2v-1" />
+            </svg>
+          </Link>
+          <button
+            className="flex flex-col gap-1.5 p-2"
+            onClick={() => setOpen(o => !o)}
+            aria-label="메뉴"
+          >
+            <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-blue-400 transition-opacity ${open ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* 공지 배너 */}
