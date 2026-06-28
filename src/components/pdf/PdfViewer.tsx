@@ -15,7 +15,14 @@ type Paragraph = {
 export default function PdfViewer({ url, manualTitle }: Props) {
   const [rawText, setRawText] = useState('')
   const [paragraphs, setParagraphs] = useState<Paragraph[]>([])
+  const [scrollLocked, setScrollLocked] = useState(false)
   const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
+
+  function toggleScrollLock() {
+    const next = !scrollLocked
+    setScrollLocked(next)
+    document.body.style.overflow = next ? 'hidden' : ''
+  }
 
   // 붙여넣으면 문단으로 분리
   function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
@@ -65,13 +72,32 @@ export default function PdfViewer({ url, manualTitle }: Props) {
       <div className="flex-1 military-card overflow-hidden relative flex flex-col" style={{ height: '60vh', minHeight: '400px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
           <span className="text-slate-400 text-xs">Google Docs Viewer</span>
-          <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300">
-            원본 PDF 열기 ↗
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleScrollLock}
+              className={`text-xs px-3 py-1 rounded border transition-colors ${
+                scrollLocked
+                  ? 'bg-yellow-600 border-yellow-500 text-white'
+                  : 'border-slate-600 text-slate-400 hover:text-yellow-300 hover:border-yellow-600'
+              }`}
+            >
+              {scrollLocked ? '🔒 잠금 해제' : '🔓 스크롤 잠금'}
+            </button>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300">
+              원본 PDF ↗
+            </a>
+          </div>
         </div>
-        <iframe src={viewerUrl} className="w-full flex-1" title={manualTitle} />
-        <div className="px-4 py-2 bg-slate-900/80 text-xs text-slate-500">
-          PDF에서 텍스트를 복사(Ctrl+C) → 오른쪽/아래 패널에 붙여넣기(Ctrl+V)
+        <iframe
+          src={viewerUrl}
+          className="w-full flex-1"
+          title={manualTitle}
+          style={{ touchAction: scrollLocked ? 'auto' : undefined }}
+        />
+        <div className={`px-4 py-2 text-xs ${scrollLocked ? 'bg-yellow-900/40 text-yellow-400' : 'bg-slate-900/80 text-slate-500'}`}>
+          {scrollLocked
+            ? '🔒 스크롤 잠금 중 — PDF에서 자유롭게 텍스트를 선택하세요'
+            : 'PDF 텍스트 선택 시 상단 [스크롤 잠금] 버튼을 먼저 누르세요'}
         </div>
       </div>
 
