@@ -6,6 +6,7 @@ import { useState } from 'react'
 const links = [
   { href: '/', label: '홈' },
   { href: '/manuals', label: '교범 목록' },
+  { href: '/search', label: '용어 검색' },
   { href: '/dictionary', label: '군사용어 사전' },
   { href: '/admin', label: '관리자' },
 ]
