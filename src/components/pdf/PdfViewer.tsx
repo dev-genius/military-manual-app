@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import PdfJsViewer from './PdfJsViewer'
 
 type Props = {
   url: string
@@ -61,15 +60,22 @@ export default function PdfViewer({ url, manualTitle }: Props) {
 
   return (
     <div className="flex flex-col lg:flex-row gap-4">
-      {/* PDF.js 뷰어 */}
+      {/* Google Docs Viewer */}
       <div className="flex-1 military-card overflow-hidden flex flex-col" style={{ height: '75vh', minHeight: '500px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700 flex-shrink-0">
-          <span className="text-slate-400 text-xs">PDF 뷰어 — 텍스트를 드래그하여 선택하세요</span>
+          <span className="text-slate-400 text-xs">PDF 뷰어</span>
           <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300">
             원본 PDF ↗
           </a>
         </div>
-        <PdfJsViewer url={url} />
+        <iframe
+          src={`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`}
+          className="w-full flex-1"
+          title={manualTitle}
+        />
+        <div className="px-4 py-2 text-xs bg-slate-900/80 text-slate-500">
+          텍스트 복사 후 오른쪽 번역 패널에 붙여넣으세요
+        </div>
       </div>
 
       {/* 번역 패널 */}
