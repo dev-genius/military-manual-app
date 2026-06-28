@@ -27,8 +27,21 @@ export default function ManualsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-1">교범 목록</h1>
-        <p className="text-slate-400 text-sm">교범을 클릭하면 PDF를 바로 열람할 수 있습니다</p>
+        <h1 className="text-2xl font-bold text-white mb-4">교범 목록</h1>
+        <div className="military-card p-4 flex flex-col gap-2">
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-blue-400 shrink-0">①</span>
+            <span>교범을 클릭하면 PDF를 바로 열람할 수 있습니다.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-blue-400 shrink-0">②</span>
+            <span>PDF 창에서 목차를 보고 원하는 페이지 숫자를 입력하시면 됩니다.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-slate-300">
+            <span className="text-blue-400 shrink-0">③</span>
+            <span>다운받고 싶으시면 <span className="text-blue-300 font-semibold">원본 ↗</span> 버튼을 누르시면 됩니다.</span>
+          </div>
+        </div>
       </div>
 
       {/* ADP / FM 탭 */}
