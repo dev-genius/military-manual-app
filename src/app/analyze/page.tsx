@@ -136,8 +136,25 @@ export default function SearchPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-white mb-1">교범 분석 — 용어 검색</h1>
-      <p className="text-slate-400 text-sm mb-6">27개 미군 교범에서 문단 단위로 용어를 검색합니다</p>
+      <h1 className="text-2xl font-bold text-white mb-4">교범 분석 — 용어 검색</h1>
+      <div className="military-card p-4 flex flex-col gap-2 mb-6">
+        <div className="flex items-start gap-2 text-sm text-slate-300">
+          <span className="text-green-400 shrink-0">①</span>
+          <span>교범에 사용되는 군사용어를 분석합니다.</span>
+        </div>
+        <div className="flex items-start gap-2 text-sm text-slate-300">
+          <span className="text-green-400 shrink-0">②</span>
+          <span>비교 교범을 선택하시고 원하는 군사용어를 입력하세요.</span>
+        </div>
+        <div className="flex items-start gap-2 text-sm text-slate-300">
+          <span className="text-green-400 shrink-0">③</span>
+          <span>선택한 교범에서 해당 군사용어가 사용된 주요 문단을 검색해줍니다.</span>
+        </div>
+        <div className="flex items-start gap-2 text-sm text-slate-300">
+          <span className="text-green-400 shrink-0">④</span>
+          <span>그 문단 페이지로 이동하셔서 <span className="text-purple-300 font-semibold">번역 기능</span>을 활용할 수 있습니다.</span>
+        </div>
+      </div>
 
       {/* 교범 선택 */}
       <div className="military-card p-4 mb-4">
