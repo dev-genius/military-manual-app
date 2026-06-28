@@ -23,7 +23,11 @@ export default function PdfJsViewer({ url }: Props) {
       try {
         const pdfjsLib = await import('pdfjs-dist')
         pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
-        const pdf = await pdfjsLib.getDocument({ url }).promise
+        if (!url) throw new Error('URL이 없습니다')
+        const response = await fetch(url)
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+        const data = await response.arrayBuffer()
+        const pdf = await pdfjsLib.getDocument({ data }).promise
         if (cancelled) return
         pdfRef.current = pdf
         setTotalPages(pdf.numPages)
