@@ -6,26 +6,57 @@ type Props = {
   manualTitle: string
 }
 
+type Paragraph = {
+  text: string
+  translation: string
+  translating: boolean
+}
+
 export default function PdfViewer({ url, manualTitle }: Props) {
-  const [translating, setTranslating] = useState(false)
-  const [selectedText, setSelectedText] = useState('')
-  const [translation, setTranslation] = useState('')
+  const [rawText, setRawText] = useState('')
+  const [paragraphs, setParagraphs] = useState<Paragraph[]>([])
   const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`
 
-  async function handleTranslate() {
-    if (!selectedText) return
-    setTranslating(true)
+  // 붙여넣으면 문단으로 분리
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const text = e.clipboardData.getData('text')
+    const paras = text
+      .split(/\n{2,}|\r\n{2,}/)
+      .map(p => p.replace(/\n/g, ' ').trim())
+      .filter(p => p.length > 0)
+      .map(p => ({ text: p, translation: '', translating: false }))
+
+    if (paras.length > 0) {
+      e.preventDefault()
+      setParagraphs(paras)
+      setRawText('')
+    }
+  }
+
+  async function translateParagraph(idx: number) {
+    setParagraphs(prev => prev.map((p, i) => i === idx ? { ...p, translating: true } : p))
     try {
       const res = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: selectedText, targetLang: 'KO' }),
+        body: JSON.stringify({ text: paragraphs[idx].text, targetLang: 'KO' }),
       })
       const data = await res.json()
-      setTranslation(data.translated || data.error)
-    } finally {
-      setTranslating(false)
+      setParagraphs(prev => prev.map((p, i) => i === idx ? { ...p, translation: data.translated || data.error, translating: false } : p))
+    } catch {
+      setParagraphs(prev => prev.map((p, i) => i === idx ? { ...p, translating: false } : p))
     }
+  }
+
+  async function translateAll() {
+    for (let i = 0; i < paragraphs.length; i++) {
+      if (!paragraphs[i].translation) await translateParagraph(i)
+    }
+  }
+
+  function reset() {
+    setParagraphs([])
+    setRawText('')
   }
 
   return (
@@ -34,57 +65,79 @@ export default function PdfViewer({ url, manualTitle }: Props) {
       <div className="flex-1 military-card overflow-hidden relative flex flex-col" style={{ height: '60vh', minHeight: '400px' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700">
           <span className="text-slate-400 text-xs">Google Docs Viewer</span>
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-400 text-xs hover:text-blue-300"
-          >
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-400 text-xs hover:text-blue-300">
             원본 PDF 열기 ↗
           </a>
         </div>
-        <iframe
-          src={viewerUrl}
-          className="w-full flex-1"
-          title={manualTitle}
-        />
+        <iframe src={viewerUrl} className="w-full flex-1" title={manualTitle} />
         <div className="px-4 py-2 bg-slate-900/80 text-xs text-slate-500">
-          텍스트를 복사한 후 아래(모바일) 또는 오른쪽(PC) 번역 패널에 붙여넣으세요
+          PDF에서 텍스트를 복사(Ctrl+C) → 오른쪽/아래 패널에 붙여넣기(Ctrl+V)
         </div>
       </div>
 
       {/* 번역 패널 */}
-      <div className="lg:w-80 flex flex-col gap-3">
+      <div className="lg:w-96 flex flex-col gap-3">
         <div className="military-card p-4 flex flex-col gap-3">
-          <h3 className="text-blue-300 text-xs font-semibold tracking-widest">번역 패널</h3>
-
-          <div>
-            <label className="text-slate-400 text-xs mb-1 block">선택한 영어 텍스트</label>
-            <textarea
-              className="military-input resize-none text-sm"
-              rows={6}
-              placeholder="PDF에서 번역할 영어 텍스트를 붙여넣으세요"
-              value={selectedText}
-              onChange={e => setSelectedText(e.target.value)}
-            />
+          <div className="flex items-center justify-between">
+            <h3 className="text-blue-300 text-xs font-semibold tracking-widest">번역 패널</h3>
+            {paragraphs.length > 0 && (
+              <button onClick={reset} className="text-slate-500 text-xs hover:text-slate-300">초기화</button>
+            )}
           </div>
 
-          <button
-            onClick={handleTranslate}
-            disabled={!selectedText || translating}
-            className="military-btn-primary w-full py-2 text-sm disabled:opacity-50"
-          >
-            {translating ? '번역 중...' : '한국어로 번역'}
-          </button>
-
-          {translation && (
+          {paragraphs.length === 0 ? (
             <div>
-              <label className="text-slate-400 text-xs mb-1 block">번역 결과</label>
-              <div
-                className="military-input text-sm leading-relaxed"
-                style={{ minHeight: '120px', padding: '12px', whiteSpace: 'pre-wrap' }}
-              >
-                {translation}
+              <label className="text-slate-400 text-xs mb-1 block">PDF 텍스트 붙여넣기</label>
+              <textarea
+                className="military-input resize-none text-sm"
+                rows={6}
+                placeholder="PDF에서 복사한 텍스트를 여기에 붙여넣으세요.&#10;문단이 자동으로 분리됩니다."
+                value={rawText}
+                onChange={e => setRawText(e.target.value)}
+                onPaste={handlePaste}
+              />
+              {rawText && (
+                <button
+                  onClick={() => {
+                    const paras = rawText.split(/\n{2,}/).map(p => p.replace(/\n/g, ' ').trim()).filter(Boolean).map(p => ({ text: p, translation: '', translating: false }))
+                    setParagraphs(paras.length > 0 ? paras : [{ text: rawText.trim(), translation: '', translating: false }])
+                    setRawText('')
+                  }}
+                  className="military-btn-primary w-full py-2 text-sm mt-2"
+                >
+                  문단 분리하기
+                </button>
+              )}
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-slate-400 text-xs">{paragraphs.length}개 문단</span>
+                <button onClick={translateAll} className="military-btn text-xs px-3 py-1">전체 번역</button>
+              </div>
+              <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                {paragraphs.map((para, idx) => (
+                  <div key={idx} className="rounded border border-slate-700 overflow-hidden">
+                    {/* 원문 */}
+                    <div className="px-3 py-2 bg-slate-800/50 text-xs text-slate-300 leading-relaxed">
+                      {para.text}
+                    </div>
+                    {/* 번역 결과 */}
+                    {para.translation ? (
+                      <div className="px-3 py-2 text-xs text-blue-200 leading-relaxed border-t border-slate-700">
+                        {para.translation}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => translateParagraph(idx)}
+                        disabled={para.translating}
+                        className="w-full px-3 py-2 text-xs text-slate-500 hover:text-blue-300 hover:bg-slate-800 transition-colors border-t border-slate-700 text-left disabled:opacity-50"
+                      >
+                        {para.translating ? '번역 중...' : '▶ 번역하기'}
+                      </button>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}
