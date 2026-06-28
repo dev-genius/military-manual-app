@@ -265,9 +265,7 @@ export default function SearchPage() {
       {total !== null && (
         <p className="text-slate-400 text-sm mb-4">
           전체 <span className="text-white font-semibold">{total.toLocaleString()}</span>개 문단 검색됨
-          {results.length < total && (
-            <span className="text-slate-500"> — 상위 <span className="text-white font-semibold">{results.length}</span>개 표시</span>
-          )}
+          {!activeManual && <span className="text-slate-500 ml-1">— 교범을 클릭하면 해당 문단이 표시됩니다</span>}
         </p>
       )}
 
@@ -276,9 +274,10 @@ export default function SearchPage() {
         <FreqBar data={manualCounts} query={searched} activeId={activeManual} onSelect={setActiveManual} />
       )}
 
-      {/* 결과 목록 */}
+      {/* 결과 목록 — 교범 선택 시에만 표시 */}
+      {activeManual && (
       <div className="space-y-3">
-        {results.filter(r => !activeManual || r.manual_id === activeManual).map(r => (
+        {results.filter(r => r.manual_id === activeManual).map(r => (
           <Link key={r.id} href={`/translate/${r.manual_id}?page=${r.page}`}>
             <div className="military-card p-4 hover:border-purple-500 transition-colors cursor-pointer">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -295,6 +294,7 @@ export default function SearchPage() {
           </Link>
         ))}
       </div>
+      )}
 
       {results.length === 0 && total === 0 && !loading && searched && (
         <div className="text-center py-16 text-slate-500">검색 결과가 없습니다</div>
