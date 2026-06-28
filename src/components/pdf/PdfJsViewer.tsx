@@ -15,7 +15,7 @@ export default function PdfJsViewer({ url }: Props) {
   const pdfRef = useRef<any>(null)
   const pageRef = useRef(1)
   const scaleRef = useRef(1.2)
-  const renderIdRef = useRef(0) // 렌더 순서 추적 (오래된 렌더 무시)
+  const renderIdRef = useRef(0)
 
   useEffect(() => {
     let cancelled = false
@@ -24,12 +24,9 @@ export default function PdfJsViewer({ url }: Props) {
       setError('')
       try {
         const pdfjsLib = await import('pdfjs-dist')
-        try {
-          const worker = new Worker('/pdf.worker.min.mjs', { type: 'module' })
-          pdfjsLib.GlobalWorkerOptions.workerPort = worker
-        } catch {
-          pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs'
-        }
+        // v3: 클래식 Worker 사용 (모든 브라우저 호환)
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
+
         if (!url) throw new Error('URL 없음')
         const response = await fetch(url)
         if (!response.ok) throw new Error(`HTTP ${response.status}`)
@@ -54,13 +51,13 @@ export default function PdfJsViewer({ url }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function renderPage(pdf: any, pageNum: number, sc: number) {
     if (!containerRef.current) return
-    const renderId = ++renderIdRef.current // 이 렌더의 고유 ID
+    const renderId = ++renderIdRef.current
 
     const container = containerRef.current
     container.innerHTML = ''
 
     const page = await pdf.getPage(pageNum)
-    if (renderIdRef.current !== renderId) return // 더 최신 렌더가 있으면 중단
+    if (renderIdRef.current !== renderId) return
 
     const viewport = page.getViewport({ scale: sc })
 
@@ -89,15 +86,18 @@ export default function PdfJsViewer({ url }: Props) {
     await page.render({ canvasContext: ctx, viewport }).promise
     if (renderIdRef.current !== renderId) return
 
+    // v3: renderTextLayer 방식
     const pdfjsLib = await import('pdfjs-dist')
     const textContent = await page.getTextContent()
-    if (pdfjsLib.TextLayer) {
-      const textLayer = new pdfjsLib.TextLayer({
-        textContentSource: textContent,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pdfjsAny = pdfjsLib as any
+    if (pdfjsAny.renderTextLayer) {
+      pdfjsAny.renderTextLayer({
+        textContent,
         container: textLayerDiv,
         viewport,
+        textDivs: [],
       })
-      await textLayer.render()
     }
   }
 
