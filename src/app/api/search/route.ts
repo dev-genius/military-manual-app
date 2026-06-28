@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
 // 흔한 일반 단어 — 이 단어 검색 시 10개로 제한
 const COMMON_WORDS = new Set([
   'the','a','an','and','or','of','in','on','to','for','is','are','was','were',
@@ -23,6 +18,11 @@ export async function GET(req: NextRequest) {
   if (!q || q.length < 2) {
     return NextResponse.json({ error: '검색어를 2자 이상 입력하세요' }, { status: 400 })
   }
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const isCommon = q.split(/\s+/).every(w => COMMON_WORDS.has(w))
   const limit = isCommon ? 10 : 50
