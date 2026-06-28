@@ -17,7 +17,7 @@ export default function Nav() {
   return (
     <nav style={{ background: '#060d1a', borderBottom: '1px solid #1e3a5f' }}>
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <span className="text-blue-400 font-bold text-lg tracking-widest">⚔ MILMAN</span>
+        <span className="text-blue-400 font-bold text-lg tracking-widest">⚔ MILMAN <span className="text-slate-500 text-xs font-normal tracking-normal">by YOO</span></span>
 
         {/* 데스크톱 메뉴 */}
         <div className="hidden md:flex gap-1">
@@ -46,6 +46,11 @@ export default function Nav() {
           <span className={`block w-5 h-0.5 bg-blue-400 transition-opacity ${open ? 'opacity-0' : ''}`} />
           <span className={`block w-5 h-0.5 bg-blue-400 transition-transform ${open ? '-rotate-45 -translate-y-2' : ''}`} />
         </button>
+      </div>
+
+      {/* 공지 배너 */}
+      <div className="text-center text-slate-500 text-xs py-1 px-4" style={{ borderBottom: '1px solid #1e3a5f', background: '#060d1a' }}>
+        * 공개자료를 활용했으며, 일부 자료는 접속이 안될 수도 있습니다.
       </div>
 
       {/* 모바일 드롭다운 메뉴 */}
