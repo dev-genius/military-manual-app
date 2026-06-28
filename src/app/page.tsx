@@ -1,98 +1,110 @@
 import Link from 'next/link'
 
-const features = [
+const services = [
   {
+    num: '01',
     icon: '📖',
-    title: '미군 교범 열람',
-    desc: '미 육군 야전 교범(FM), 교리 발행물(ADP) 등을 PDF로 바로 열람',
+    title: '교범 원문 열람',
+    subtitle: 'PDF Viewer',
+    desc: '미 육군 야전 교범(FM), 교리 발행물(ADP) 원문을 PDF로 바로 열람합니다.',
     href: '/manuals',
+    color: 'border-blue-700 hover:border-blue-400',
+    badge: '27개 교범',
   },
   {
-    icon: '📚',
-    title: '군사용어 사전',
-    desc: '한국어 군사용어 검색 → 영어 변환 → 교범 내 해당 내용 검색',
-    href: '/dictionary',
-  },
-]
-
-const upcoming = [
-  {
-    icon: '🔤',
-    title: '자동 번역 기능',
-    desc: '교범 내용을 한국어로 실시간 번역. 군사 전문용어 특화',
+    num: '02',
+    icon: '🔍',
+    title: '교범 분석',
+    subtitle: 'Term Search',
+    desc: '군사용어를 입력하면 27개 교범에서 해당 문단을 추출하고 교범별 사용 빈도를 시각화합니다.',
+    href: '/search',
+    color: 'border-green-700 hover:border-green-400',
+    badge: '14,000+ 문단',
   },
   {
-    icon: '🇰🇷↔🇺🇸',
-    title: '한미 군사용어 비교',
-    desc: '한국군과 미군의 용어 차이를 비교하고 대응 개념을 확인',
+    num: '03',
+    icon: '🌐',
+    title: '교범 번역',
+    subtitle: 'AI Translation',
+    desc: '현재 열람 중인 교범 페이지를 AI가 한국어로 번역합니다. 군사 전문용어 특화.',
+    href: '/manuals',
+    color: 'border-purple-700 hover:border-purple-400',
+    badge: 'Gemini AI',
   },
 ]
 
 export default function Home() {
   return (
-    <div className="py-12">
-      <div className="text-center mb-16">
-        <div className="text-blue-400 text-sm tracking-[0.3em] mb-3 font-mono">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
-        <h1 className="text-4xl font-bold text-white mb-4">미군 교범 열람 시스템</h1>
-        <p className="text-slate-400 text-lg max-w-xl mx-auto">
-          미군 야전 교범을 한국어로 검색하고 열람하세요.<br />
-          군사용어 사전으로 정확한 용어를 확인합니다.
+    <div className="max-w-4xl mx-auto px-4 py-12">
+      {/* 헤더 */}
+      <div className="text-center mb-14">
+        <div className="text-blue-400 text-xs tracking-[0.3em] mb-3 font-mono">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">미군 교범 열람 시스템</h1>
+        <p className="text-slate-400 text-base max-w-lg mx-auto leading-relaxed">
+          미군 야전 교범을 열람하고, 군사용어를 검색하고, AI로 번역하세요.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {features.map(f => (
-          <Link key={f.href + f.title} href={f.href}>
-            <div className="military-card p-6 hover:border-blue-500 transition-colors cursor-pointer h-full">
-              <div className="text-4xl mb-4">{f.icon}</div>
-              <h2 className="text-white font-semibold text-lg mb-2">{f.title}</h2>
-              <p className="text-slate-400 text-sm leading-relaxed">{f.desc}</p>
+      {/* 3대 서비스 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+        {services.map(s => (
+          <Link key={s.href + s.num} href={s.href}>
+            <div className={`military-card p-6 cursor-pointer border ${s.color} transition-colors h-full flex flex-col`}>
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-slate-600 font-mono text-xs">{s.num}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">{s.badge}</span>
+              </div>
+              <div className="text-3xl mb-3">{s.icon}</div>
+              <h2 className="text-white font-bold text-lg mb-0.5">{s.title}</h2>
+              <div className="text-slate-500 text-xs mb-3 font-mono">{s.subtitle}</div>
+              <p className="text-slate-400 text-sm leading-relaxed flex-1">{s.desc}</p>
+              <div className="mt-4 text-blue-400 text-xs font-semibold">바로가기 →</div>
             </div>
           </Link>
         ))}
       </div>
 
-      {/* 개발 예정 */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-slate-400 text-sm font-semibold tracking-widest">개발 예정</h2>
-          <div className="flex-1 h-px bg-slate-800" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {upcoming.map(u => (
-            <div key={u.title} className="military-card p-5 opacity-60 border-dashed">
-              <div className="flex items-start gap-3">
-                <div className="text-2xl">{u.icon}</div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-slate-300 font-semibold text-sm">{u.title}</h3>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-500">준비 중</span>
-                  </div>
-                  <p className="text-slate-500 text-xs leading-relaxed">{u.desc}</p>
-                </div>
-              </div>
-            </div>
+      {/* 수록 교범 목록 */}
+      <div className="military-card p-6">
+        <h3 className="text-blue-300 text-xs font-semibold tracking-widest mb-4">수록 교범 목록 (27개)</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5">
+          {MANUAL_LIST.map(m => (
+            <Link key={m.id} href={`/manuals/${m.id}`} className="text-slate-400 text-xs hover:text-blue-300 truncate">
+              · {m.number} {m.title}
+            </Link>
           ))}
         </div>
-      </div>
-
-      <div className="military-card p-6">
-        <h3 className="text-blue-300 font-semibold mb-3 text-sm tracking-widest">QUICK SEARCH</h3>
-        <QuickSearch />
       </div>
     </div>
   )
 }
 
-function QuickSearch() {
-  return (
-    <form action="/dictionary" method="get" className="flex gap-3">
-      <input
-        name="q"
-        className="military-input flex-1"
-        placeholder="한국어 군사용어 검색 (예: 작전명령, 화력지원)"
-      />
-      <button type="submit" className="military-btn-primary px-6 py-2 rounded">검색</button>
-    </form>
-  )
-}
+const MANUAL_LIST = [
+  { id: 'adp-1',      number: 'ADP 1',      title: 'The Army' },
+  { id: 'adp-1-01',   number: 'ADP 1-01',   title: 'Doctrine Primer' },
+  { id: 'adp-2-0',    number: 'ADP 2-0',    title: 'Intelligence' },
+  { id: 'adp-3-0',    number: 'ADP 3-0',    title: 'Operations' },
+  { id: 'adp-3-05',   number: 'ADP 3-05',   title: 'Army Special Operations' },
+  { id: 'adp-3-07',   number: 'ADP 3-07',   title: 'Stability' },
+  { id: 'adp-3-13',   number: 'ADP 3-13',   title: 'Information' },
+  { id: 'adp-3-19',   number: 'ADP 3-19',   title: 'Fires' },
+  { id: 'adp-3-28',   number: 'ADP 3-28',   title: 'Defense Support of Civil Auth.' },
+  { id: 'adp-3-37',   number: 'ADP 3-37',   title: 'Protection' },
+  { id: 'adp-3-90',   number: 'ADP 3-90',   title: 'Offense and Defense' },
+  { id: 'adp-5-0',    number: 'ADP 5-0',    title: 'The Operations Process' },
+  { id: 'fm-1',       number: 'FM 1',       title: 'The Army' },
+  { id: 'fm-1-02-1',  number: 'FM 1-02.1',  title: 'Operational Terms' },
+  { id: 'fm-1-02-2',  number: 'FM 1-02.2',  title: 'Military Symbols' },
+  { id: 'fm-2-0',     number: 'FM 2-0',     title: 'Intelligence' },
+  { id: 'fm-2-22-3',  number: 'FM 2-22.3',  title: 'Human Intelligence Ops' },
+  { id: 'fm-3-0',     number: 'FM 3-0',     title: 'Operations' },
+  { id: 'fm-3-01',    number: 'FM 3-01',    title: 'Air and Missile Defense' },
+  { id: 'fm-3-01-44', number: 'FM 3-01.44', title: 'Short-Range Air Defense' },
+  { id: 'fm-3-04',    number: 'FM 3-04',    title: 'Army Aviation' },
+  { id: 'fm-3-05',    number: 'FM 3-05',    title: 'Army Special Operations' },
+  { id: 'fm-3-07',    number: 'FM 3-07',    title: 'Stability' },
+  { id: 'fm-3-90',    number: 'FM 3-90',    title: 'Tactics' },
+  { id: 'fm-3-96',    number: 'FM 3-96',    title: 'Brigade Combat Team' },
+  { id: 'fm-5-0',     number: 'FM 5-0',     title: 'Planning and Orders Production' },
+  { id: 'fm-6-0',     number: 'FM 6-0',     title: 'Commander and Staff Org.' },
+]
