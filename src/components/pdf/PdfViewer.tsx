@@ -14,6 +14,7 @@ export default function PdfViewer({ url, manualTitle, initialPage = 1 }: Props) 
   const viewerRef = useRef<PdfJsViewerHandle>(null)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent))
   }, [])
 

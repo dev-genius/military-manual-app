@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function DictionaryPage() {
   return (
     <div>
@@ -20,7 +22,7 @@ export default function DictionaryPage() {
         </div>
         <div className="mt-8 text-xs text-slate-600">
           교범 열람 및 번역 기능은 정상 이용 가능합니다 →{' '}
-          <a href="/manuals" className="text-blue-400 hover:text-blue-300">교범 목록 보기</a>
+          <Link href="/manuals" className="text-blue-400 hover:text-blue-300">교범 목록 보기</Link>
         </div>
       </div>
     </div>
