@@ -12,14 +12,14 @@ const services = [
     desc: '미 육군 야전 교범(FM), 교리 발행물(ADP) 원문을 PDF로 바로 열람합니다.',
     href: '/manuals',
     color: 'border-blue-700 hover:border-blue-400',
-    badge: '{MANUALS.length}개 교범',
+    badge: '28개 교범',
   },
   {
     num: '02',
     icon: '🔍',
     title: '교범 분석',
     subtitle: 'Term Search',
-    desc: '군사용어를 입력하면 {MANUALS.length}개 교범에서 해당 문단을 추출하고 교범별 사용 빈도를 시각화합니다.',
+    desc: '군사용어를 입력하면 28개 교범에서 해당 문단을 추출하고 교범별 사용 빈도를 시각화합니다.',
     href: '/analyze',
     color: 'border-green-700 hover:border-green-400',
     badge: '14,000+ 문단',
@@ -42,10 +42,12 @@ export default function Home() {
       {/* 헤더 */}
       <div className="text-center mb-14">
         <div className="text-blue-400 text-xs tracking-[0.3em] mb-3 font-mono">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">교리 연구 및 학습을 위한 미군 교범 플랫폼</h1>
-        <p className="text-slate-400 text-base max-w-2xl mx-auto leading-relaxed">
-          대한민국 육군 장교·부사관이 미군 교범(FM·ADP)을 더 쉽고 정확하게 이해할 수 있도록<br className="hidden md:block" />
-          열람·분석·번역 기능을 제공합니다.
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">교리 연구 및 학습 보조를 위한</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">미군 교범 열람 플랫폼</h1>
+        <p className="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed">
+          육군대학 교관 및 타기관의 장교·부사관의 미군 교범 열람 및 연구를 돕기 위하여<br className="hidden md:block" />
+          열람, 분석, 번역 기능을 제공하는 어플입니다.<br />
+          공개자료를 활용하여 제작되었으며, 무료로 제공합니다 <span className="text-slate-500">(by YOO)</span>
         </p>
       </div>
 
