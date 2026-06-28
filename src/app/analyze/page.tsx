@@ -79,25 +79,50 @@ function FormattedText({ text, query }: { text: string; query: string }) {
   )
 }
 
-function FreqBar({ data, query }: { data: FreqEntry[]; query: string }) {
+function FreqBar({ data, query, activeId, onSelect }: {
+  data: FreqEntry[]
+  query: string
+  activeId: string | null
+  onSelect: (id: string | null) => void
+}) {
   const max = Math.max(...data.map(d => d.count))
   return (
     <div className="military-card p-4 mb-4">
-      <h3 className="text-blue-300 text-xs font-semibold tracking-widest mb-3">
-        교범별 출현 빈도 — &ldquo;{query}&rdquo;
-      </h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-blue-300 text-xs font-semibold tracking-widest">
+          교범별 출현 빈도 — &ldquo;{query}&rdquo;
+        </h3>
+        {activeId && (
+          <button onClick={() => onSelect(null)} className="text-xs text-slate-400 hover:text-blue-300">
+            전체 보기 ✕
+          </button>
+        )}
+      </div>
       <div className="space-y-2">
-        {data.map(d => (
-          <div key={d.manual_id} className="flex items-center gap-2">
-            <Link href={`/manuals/${d.manual_id}`} className="text-slate-400 text-xs w-24 shrink-0 hover:text-blue-300">
-              {d.manual_number}
-            </Link>
-            <div className="flex-1 bg-slate-800 rounded h-4 overflow-hidden">
-              <div className="h-full bg-blue-600 rounded" style={{ width: `${(d.count / max) * 100}%` }} />
-            </div>
-            <span className="text-slate-400 text-xs w-6 text-right">{d.count}</span>
-          </div>
-        ))}
+        {data.map(d => {
+          const isActive = activeId === d.manual_id
+          const isDimmed = activeId !== null && !isActive
+          return (
+            <button
+              key={d.manual_id}
+              onClick={() => onSelect(isActive ? null : d.manual_id)}
+              className={`w-full flex items-center gap-2 rounded px-1 py-0.5 transition-colors ${
+                isActive ? 'bg-blue-900/40' : 'hover:bg-slate-800'
+              } ${isDimmed ? 'opacity-40' : ''}`}
+            >
+              <span className={`text-xs w-24 shrink-0 text-left ${isActive ? 'text-blue-300 font-semibold' : 'text-slate-400'}`}>
+                {d.manual_number}
+              </span>
+              <div className="flex-1 bg-slate-800 rounded h-4 overflow-hidden">
+                <div
+                  className={`h-full rounded ${isActive ? 'bg-blue-400' : 'bg-blue-600'}`}
+                  style={{ width: `${(d.count / max) * 100}%` }}
+                />
+              </div>
+              <span className="text-slate-400 text-xs w-6 text-right">{d.count}</span>
+            </button>
+          )
+        })}
       </div>
     </div>
   )
@@ -108,6 +133,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<Result[]>([])
   const [total, setTotal] = useState<number | null>(null)
   const [manualCounts, setManualCounts] = useState<FreqEntry[]>([])
+  const [activeManual, setActiveManual] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState('')
@@ -134,6 +160,7 @@ export default function SearchPage() {
     setResults([])
     setTotal(null)
     setManualCounts([])
+    setActiveManual(null)
     setSearched(q.trim())
     try {
       const params = new URLSearchParams({ q: q.trim(), manuals: [...selectedIds].join(',') })
@@ -245,11 +272,13 @@ export default function SearchPage() {
       )}
 
       {/* 빈도 시각화 */}
-      {manualCounts.length > 0 && <FreqBar data={manualCounts} query={searched} />}
+      {manualCounts.length > 0 && (
+        <FreqBar data={manualCounts} query={searched} activeId={activeManual} onSelect={setActiveManual} />
+      )}
 
       {/* 결과 목록 */}
       <div className="space-y-3">
-        {results.map(r => (
+        {results.filter(r => !activeManual || r.manual_id === activeManual).map(r => (
           <Link key={r.id} href={`/translate/${r.manual_id}?page=${r.page}`}>
             <div className="military-card p-4 hover:border-purple-500 transition-colors cursor-pointer">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
