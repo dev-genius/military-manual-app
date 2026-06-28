@@ -19,10 +19,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: '검색어를 2자 이상 입력하세요' }, { status: 400 })
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !key) {
+    return NextResponse.json({ error: 'Supabase 환경변수가 설정되지 않았습니다 (NEXT_PUBLIC_SUPABASE_URL)' }, { status: 500 })
+  }
+
+  const supabase = createClient(url, key)
 
   const isCommon = q.split(/\s+/).every(w => COMMON_WORDS.has(w))
   const limit = isCommon ? 10 : 50
